@@ -1,4 +1,4 @@
-package com.turtle.elasticsearch.seven.demo;
+package com.turtle.elasticsearch.seven.demo.index;
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RequestOptions;
@@ -24,7 +24,7 @@ public class EsTest_Index_Get {
                     RestClient.builder(new HttpHost("localhost", 9200, "http"))
             );
 
-            // 查询索引的request请求
+            // 创建查询索引的request请求
             GetIndexRequest getIndexRequest = new GetIndexRequest("user");
             GetIndexResponse getIndexResponse = restHighLevelClient.indices().get(getIndexRequest, RequestOptions.DEFAULT);
             System.out.println("Setting:" + getIndexResponse.getSettings());

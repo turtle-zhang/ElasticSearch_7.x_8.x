@@ -1,4 +1,4 @@
-package com.turtle.elasticsearch.seven.demo;
+package com.turtle.elasticsearch.seven.demo.index;
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;

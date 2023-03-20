@@ -1,4 +1,4 @@
-package com.turtle.elasticsearch.seven.demo;
+package com.turtle.elasticsearch.seven.demo.index;
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RequestOptions;
@@ -24,7 +24,7 @@ public class EsTest_Index_Create {
                     RestClient.builder(new HttpHost("localhost", 9200, "http"))
             );
 
-            // 创建索引
+            // 创建索引的request
             CreateIndexRequest createIndexRequest = new CreateIndexRequest("user");
             CreateIndexResponse createIndexResponse = restHighLevelClient.indices().create(createIndexRequest, RequestOptions.DEFAULT);
 

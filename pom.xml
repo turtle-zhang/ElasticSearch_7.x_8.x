@@ -40,8 +40,11 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
-
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.71</version>
+        </dependency>
 
         <!-- 普通的maven工程需要引入的jar包   ElasticSearch7.8的版本-->
         <!-- ============================Start===============================   -->
@@ -56,6 +59,8 @@
             <artifactId>elasticsearch-rest-high-level-client</artifactId>
             <version>7.8.0</version>
         </dependency>
+
+
         <!-- elasticsearch 依赖 2.x 的 log4j -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>

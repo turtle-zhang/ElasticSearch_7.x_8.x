@@ -1,0 +1,566 @@
+GET _search
+  {
+    "query": {
+      "match_all": {}
+    }
+  }
+
+  # 创建索引
+  PUT myindex
+
+  # 创建重复索引,会出现异常
+  PUT myindex
+
+  #查看所有索引的状态信息
+  GET _cat/indices?v
+
+  # 查看单个索引的信息
+  GET myindex
+
+
+  # 删除索引信息
+  DELETE myindex
+
+  PUT shopping
+
+  # 往索引中写入文档，不指定id
+  POST shopping/_doc
+  {
+    "title":"小米手机",
+    "category":"小米",
+    "images":"http://www.gulixueyuan.com/xm.jpg",
+    "price":3999.00
+  }
+
+  # 往索引中写入文档，指定id
+  POST shopping/_doc/1
+  {
+    "title":"小米手机",
+    "category":"小米",
+    "images":"http://www.gulixueyuan.com/xm.jpg",
+    "price":3999.00
+  }
+
+  # 通过文档id来查询对应的文档信息
+  GET shopping/_doc/1?pretty=true
+
+  # 查询所有的文档数据，不推荐无请求体的使用
+  # GET shopping/_doc/_search
+
+  DELETE shopping
+
+  GET shopping
+
+  # 修改指定id的文档值,通过全量文档的覆盖
+  POST shopping/_doc/1
+  {
+    "title":"华为手机",
+    "category":"华为",
+    "images":"http://www.gulixueyuan.com/xm.jpg",
+    "price":123456.00
+  }
+
+  GET shopping/_doc/1
+
+  # 通过update来修改指定的字段值,注意修改对象需要放在doc的对象里面
+  POST shopping/_update/1
+  {
+    "doc":{
+      "price":3999.00
+    }
+  }
+
+  GET shopping/_doc/1
+
+
+  # 删除文档
+  DELETE shopping/_doc/1
+
+  GET shopping/_doc/1
+
+
+  # 插入两条不一样的数据
+  POST shopping/_doc/1
+  {
+    "title":"华为手机",
+    "category":"华为",
+    "images":"http://www.gulixueyuan.com/xm.jpg",
+    "price":4000.00
+  }
+
+  POST shopping/_doc/2
+  {
+    "title":"小米手机",
+    "category":"小米",
+    "images":"http://www.gulixueyuan.com/xm.jpg",
+    "price":4000.00
+  }
+
+  GET _search
+  {
+    "query": {
+      "match_all": {}
+    }
+  }
+
+  GET shopping
+
+  GET shopping/_doc/1
+
+  # 通过文档的字段属性值来做删除操作,为POST操作
+  # 删除shopping索引中存放文档中，存在price=4000.0的文档
+  POST shopping/_delete_by_query
+  {
+    "query":{
+      "match":{
+        "price":4000.0
+      }
+    }
+  }
+
+  GET shopping/_search
+
+
+  GET shopping/_mapping
+
+  # 创建一个新的索引，同时指定对应的映射规则
+  PUT student
+
+  PUT student/_mapping
+  {
+    "properties":{
+      "name":{
+        "type":"text",
+        "index":"true"
+      },
+      "sex":{
+        "type":"text",
+        "index":"false"
+      },
+      "age":{
+        "type":"long",
+        "index":"false"
+      }
+    }
+  }
+
+  GET student/_mapping
+
+
+  GET _cat/indices?v
+
+
+  DELETE /student
+
+  DELETE /shopping
+
+
+  # 批量插入数据
+  POST /student/_doc/1001
+  {
+    "name":"zhangsan",
+    "nickname":"zhangsan",
+    "sex":"男",
+    "age":30
+  }
+
+  POST /student/_doc/1002
+  {
+    "name":"lisi",
+    "nickname":"lisi",
+    "sex":"男",
+    "age":20
+  }
+
+  POST /student/_doc/1003
+  {
+    "name":"wangwu",
+    "nickname":"wangwu",
+    "sex":"女",
+    "age":40
+  }
+
+  POST /student/_doc/1004
+  {
+    "name":"zhangsan1",
+    "nickname":"zhangsan1",
+    "sex":"女",
+    "age":50
+  }
+
+  POST /student/_doc/1005
+  {
+    "name":"zhangsan2",
+    "nickname":"zhangsan2",
+    "sex":"女",
+    "age":30
+  }
+
+  # 查询所有文档值（方式一）
+  GET /student/_search
+
+  # 通过match_all来完成对应的对象查询匹配(配用匹配)
+  GET /student/_search
+  {
+    "query": {
+      "match_all": {
+
+      }
+    }
+  }
+
+
+  # 使用match来做到精确匹配操作
+  GET /student/_search
+  {
+    "query": {
+      "match": {
+        "name": "zhangsan"
+      }
+    }
+  }
+
+  # multi_match 来做到多字段匹配，类似于match.也就是fields的字段中对应的值等于query会被匹配到
+  GET /student/_search
+  {
+    "query": {
+      "multi_match": {
+        "query": "zhangsan",
+        "fields": ["name","nickname"]
+      }
+    }
+  }
+
+
+  # term的字段值精确匹配
+  GET /student/_search
+  {
+    "query": {
+      "term": {
+        "name": {
+          "value": "lisi"
+        }
+      }
+    }
+  }
+
+
+  # terms的字段多个值精确匹配
+  GET /student/_search
+  {
+    "query": {
+      "terms": {
+        "name": [
+            "lisi",
+            "zhangsan"
+        ]
+      }
+    }
+  }
+
+
+  # 通过_source来决定我们的响应结果过滤（将name字段对应的值为lisi/zhagnsan数据的name、sex输出）
+  GET /student/_search
+  {
+    "_source": ["name","sex"],
+    "query": {
+      "terms": {
+        "name": [
+            "lisi",
+            "zhangsan"
+        ]
+      }
+    }
+  }
+
+  # 通过terms来做匹配筛查，然后通过includes来限制输出字段，类似于上面不指定includes的形式使用
+  GET /student/_search
+  {
+    "_source": {
+      "includes": ["name","nickname","sex"]
+    },
+    "query": {
+      "terms": {
+        "name": [
+            "lisi",
+            "zhangsan"
+        ]
+      }
+    }
+  }
+
+  # 通过terms来做匹配筛查，然后通过excludes来排除输出字段
+  GET /student/_search
+  {
+    "_source": {
+      "excludes": "name"
+    },
+    "query": {
+      "term": {
+        "name": {
+          "value": "zhangsan"
+        }
+      }
+    }
+  }
+
+  GET /student/_search
+
+  # 组合查询  must:必须   must_not：必须不  should:应该
+  # name必须为zhangsan，age不能等于40,sex可以为男
+  # _source  和  query是平级的，不被各自嵌套
+  GET /student/_search
+  {
+    "_source": {
+      "excludes": ["name"]
+    },
+    "query": {
+      "bool": {
+        "must": [
+          {
+            "match": {
+              "name": "zhangsan"
+            }
+          }
+        ],
+        "must_not": [
+          {
+            "match": {
+              "age": 40
+            }
+          }
+        ],
+        "should": [
+          {
+            "match": {
+              "sex": "男"
+            }
+          }
+        ]
+      }
+    }
+  }
+
+  # 使用 range来做筛查，gt：大于  lt：小于，针对于数字类型
+  # age的取值范围大于等于10，小于等于30
+  GET /student/_search
+  {
+    "query": {
+      "range": {
+        "age": {
+          "gte": 10,
+          "lte": 30
+        }
+      }
+    }
+  }
+
+  # 使用fuzzy完成模糊查询,fuzziness代表偏差的个数（也就是允许不一样的字母个数）
+  GET /student/_search
+  {
+    "query": {
+      "fuzzy": {
+        "name": {
+          "value": "zhangsan",
+          "fuzziness": 1
+        }
+      }
+    }
+  }
+
+  # 通过引入sort来做单字段排序处理
+  # sort query _source 三个平级
+  GET /student/_search
+  {
+    "query": {
+      "fuzzy": {
+        "name": {
+          "value": "zhangsan",
+          "fuzziness": 2
+        }
+      }
+    },
+    "sort": [
+      {
+        "age": {
+          "order": "asc"
+        }
+      }
+    ]
+  }
+
+  #结合使用 age 和 _score 进行查询，并且匹配的结果首先按照年龄排序，然后
+  # 按照相关性得分排序
+  GET /student/_search
+  {
+    "query": {
+      "fuzzy": {
+        "name": {
+          "value": "zhangsan",
+          "fuzziness": 2
+        }
+      }
+    },
+    "sort": [
+      {
+        "age": {
+          "order": "asc"
+        }
+      },
+      {
+        "_score":{
+          "order": "asc"
+        }
+      }
+    ]
+  }
+
+
+  # highlight实现高亮
+  GET /student/_search
+  {
+    "query": {
+      "fuzzy": {
+        "name": {
+          "value": "zhangsan",
+          "fuzziness": 2
+        }
+      }
+    },
+    "sort": [
+      {
+        "age": {
+          "order": "asc"
+        }
+      },
+      {
+        "_score":{
+          "order": "asc"
+        }
+      }
+    ],
+    "highlight": {
+      "pre_tags": "<font color='red'>",
+      "post_tags": "</font>",
+      "fields": {
+        "name": {}
+      }
+    }
+  }
+
+
+  # 分页查询,引入 from-size
+  GET student/_search
+  {
+    "query": {
+      "match_all": {}
+    },
+    "sort": [
+      {
+        "age": {
+          "order": "desc"
+        }
+      }
+    ],
+    "from": 0,
+    "size": 2
+  }
+
+  # 聚合查询,取最大值，变量名放在max_age中
+  GET student/_search
+  {
+    "aggs": {
+      "max_age": {
+        "max": {
+          "field": "age"
+        }
+      }
+    }
+  }
+
+  # 最小值
+  GET student/_search
+  {
+    "aggs": {
+      "min_age": {
+        "min": {
+          "field": "age"
+        }
+      }
+    }
+  }
+
+  # 平均值
+  GET student/_search
+  {
+    "aggs": {
+      "avg_age": {
+        "avg": {
+          "field": "age"
+        }
+      }
+    }
+  }
+
+  # 和
+  GET student/_search
+  {
+    "aggs": {
+      "sum_age": {
+        "sum": {
+          "field": "age"
+        }
+      }
+    }
+  }
+
+
+
+  # 对待处理的字段去重然后再取总数量
+  GET student/_search
+  {
+    "aggs": {
+      "cardinality_age": {
+        "cardinality": {
+          "field": "age"
+        }
+      }
+    }
+  }
+
+
+  # state聚合：对某个字段一次性返回 count，max，min，avg 和 sum 五个指标
+  GET student/_search
+  {
+    "aggs": {
+      "stats_age": {
+        "stats": {
+          "field": "age"
+        }
+      }
+    }
+  }
+
+  # 桶聚合：类似于SQL中的分组函数group by
+  GET student/_search
+  {
+    "aggs": {
+      "age_groupBY": {
+        "terms": {
+          "field": "age"
+        }
+      }
+    },
+    "size":0
+  }
+
+
+
+
+
+
+
+
+
+
+
