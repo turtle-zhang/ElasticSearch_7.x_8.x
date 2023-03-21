@@ -35,9 +35,6 @@ public class EsTest_Doc_Create {
             user.setSex("男");
 
             String userStr = JSONObject.toJSONString(user);
-//            ObjectMapper userStr = new ObjectMapper();
-//            ObjectMapper objectMapper = new ObjectMapper();
-//            String userStr = objectMapper.writeValueAsString(user);
 
             indexRequest.source(userStr, XContentType.JSON);
 
